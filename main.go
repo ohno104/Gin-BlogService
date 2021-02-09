@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"felix.bs.com/felix/BeStrongerInGO/02_GinBlog/global"
+	"felix.bs.com/felix/BeStrongerInGO/02_GinBlog/internal/model"
 	"felix.bs.com/felix/BeStrongerInGO/02_GinBlog/internal/routers"
 	"felix.bs.com/felix/BeStrongerInGO/02_GinBlog/pkg/setting"
 	"github.com/gin-gonic/gin"
@@ -15,6 +16,11 @@ func init() {
 	err := setupSetting()
 	if err != nil {
 		log.Fatalf("init.setupSetting err: %v", err)
+	}
+
+	err = setupDBEngine()
+	if err != nil {
+		log.Fatalf("init.setupDBEngine err: %v", err)
 	}
 
 }
@@ -63,5 +69,15 @@ func setupSetting() error {
 
 	global.ServerSetting.ReadTimeout *= time.Second
 	global.ServerSetting.WriteTimeout *= time.Second
+	return nil
+}
+
+func setupDBEngine() error {
+	var err error
+	global.DBEngine, err = model.NewDBEngine(global.DatabaseSettings)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

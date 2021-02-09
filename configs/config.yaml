@@ -11,7 +11,7 @@ App:
   LogFileExt: .log
 Database:
   DBType: mysql
-  Username: root
+  UserName: root
   Password: password
   Host: 127.0.0.1:3306
   DBName: blog_service
