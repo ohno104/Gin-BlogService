@@ -3,8 +3,8 @@ package model
 import (
 	"fmt"
 
-	"felix.bs.com/felix/BeStrongerInGO/02_GinBlog/global"
-	"felix.bs.com/felix/BeStrongerInGO/02_GinBlog/pkg/setting"
+	"felix.bs.com/felix/BeStrongerInGO/Gin-BlogService/global"
+	"felix.bs.com/felix/BeStrongerInGO/Gin-BlogService/pkg/setting"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
 )

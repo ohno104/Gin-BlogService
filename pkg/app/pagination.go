@@ -1,8 +1,8 @@
 package app
 
 import (
-	"felix.bs.com/felix/BeStrongerInGO/02_GinBlog/global"
-	"felix.bs.com/felix/BeStrongerInGO/02_GinBlog/pkg/convert"
+	"felix.bs.com/felix/BeStrongerInGO/Gin-BlogService/global"
+	"felix.bs.com/felix/BeStrongerInGO/Gin-BlogService/pkg/convert"
 	"github.com/gin-gonic/gin"
 )
 

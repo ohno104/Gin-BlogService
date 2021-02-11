@@ -5,11 +5,12 @@ import (
 	"net/http"
 	"time"
 
-	"felix.bs.com/felix/BeStrongerInGO/02_GinBlog/global"
-	"felix.bs.com/felix/BeStrongerInGO/02_GinBlog/internal/model"
-	"felix.bs.com/felix/BeStrongerInGO/02_GinBlog/internal/routers"
-	"felix.bs.com/felix/BeStrongerInGO/02_GinBlog/pkg/logger"
-	"felix.bs.com/felix/BeStrongerInGO/02_GinBlog/pkg/setting"
+	_ "felix.bs.com/felix/BeStrongerInGO/Gin-BlogService/docs"
+	"felix.bs.com/felix/BeStrongerInGO/Gin-BlogService/global"
+	"felix.bs.com/felix/BeStrongerInGO/Gin-BlogService/internal/model"
+	"felix.bs.com/felix/BeStrongerInGO/Gin-BlogService/internal/routers"
+	"felix.bs.com/felix/BeStrongerInGO/Gin-BlogService/pkg/logger"
+	"felix.bs.com/felix/BeStrongerInGO/Gin-BlogService/pkg/setting"
 	"github.com/gin-gonic/gin"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
@@ -32,6 +33,10 @@ func init() {
 
 }
 
+// @title 部落格系統
+// @version 1.0
+// @description GO語言程式設計之旅:一起用Go做專案
+// @termsOfService https://github.com/go-programming-tour-book
 func main() {
 	/*
 		router := routers.NewRouter()

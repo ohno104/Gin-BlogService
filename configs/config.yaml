@@ -12,7 +12,7 @@ App:
 Database:
   DBType: mysql
   UserName: root
-  Password: password
+  Password: Password
   Host: 127.0.0.1:3306
   DBName: blog_service
   TablePrefix: blog_

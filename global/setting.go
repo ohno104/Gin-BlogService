@@ -1,8 +1,8 @@
 package global
 
 import (
-	"felix.bs.com/felix/BeStrongerInGO/02_GinBlog/pkg/logger"
-	"felix.bs.com/felix/BeStrongerInGO/02_GinBlog/pkg/setting"
+	"felix.bs.com/felix/BeStrongerInGO/Gin-BlogService/pkg/logger"
+	"felix.bs.com/felix/BeStrongerInGO/Gin-BlogService/pkg/setting"
 )
 
 var (

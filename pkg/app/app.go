@@ -3,7 +3,7 @@ package app
 import (
 	"net/http"
 
-	"felix.bs.com/felix/BeStrongerInGO/02_GinBlog/pkg/errcode"
+	"felix.bs.com/felix/BeStrongerInGO/Gin-BlogService/pkg/errcode"
 	"github.com/gin-gonic/gin"
 )
 
