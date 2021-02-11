@@ -1,6 +1,11 @@
 package v1
 
-import "github.com/gin-gonic/gin"
+import (
+	"felix.bs.com/felix/BeStrongerInGO/Gin-BlogService/global"
+	"felix.bs.com/felix/BeStrongerInGO/Gin-BlogService/pkg/app"
+	"felix.bs.com/felix/BeStrongerInGO/Gin-BlogService/pkg/errcode"
+	"github.com/gin-gonic/gin"
+)
 
 type Tag struct{}
 
@@ -18,7 +23,24 @@ func NewTag() Tag {
 // @Failure 400 {object} errcode.Error "請求錯誤"
 // @Failure 500 {object} errcode.Error "內部錯誤"
 // @Router /api/v1/tags [get]
-func (t Tag) List(c *gin.Context) {}
+func (t Tag) List(c *gin.Context) {
+	param := struct {
+		Name  string `form:"name" binding:"max=100"`
+		State uint8  `form:"state,default=1" binding:"oneof=0 1"`
+	}{}
+	response := app.NewResponse(c)
+	valid, errs := app.BindAndValid(c, &param)
+	if !valid {
+		global.Logger.Errorf(c, "app.BindAndValid errs: %v", errs)
+		errRsp := errcode.InvalidParams.WithDetails(errs.Errors()...)
+		response.ToErrorResponse(errRsp)
+		return
+
+	}
+
+	response.ToResponse(gin.H{})
+	return
+}
 
 // @Summary 新增標籤
 // @Produce json

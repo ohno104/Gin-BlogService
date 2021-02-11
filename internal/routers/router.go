@@ -1,6 +1,7 @@
 package routers
 
 import (
+	"felix.bs.com/felix/BeStrongerInGO/Gin-BlogService/internal/middleware"
 	v1 "felix.bs.com/felix/BeStrongerInGO/Gin-BlogService/internal/routers/api/v1"
 
 	_ "felix.bs.com/felix/BeStrongerInGO/Gin-BlogService/docs"
@@ -15,6 +16,7 @@ func NewRouter() *gin.Engine {
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	r.Use(middleware.Translations())
 
 	article := v1.NewArticle()
 	tag := v1.NewTag()

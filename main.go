@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"time"
 
-	_ "felix.bs.com/felix/BeStrongerInGO/Gin-BlogService/docs"
 	"felix.bs.com/felix/BeStrongerInGO/Gin-BlogService/global"
 	"felix.bs.com/felix/BeStrongerInGO/Gin-BlogService/internal/model"
 	"felix.bs.com/felix/BeStrongerInGO/Gin-BlogService/internal/routers"
