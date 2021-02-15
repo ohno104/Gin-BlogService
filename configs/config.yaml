@@ -33,3 +33,13 @@ JWT:
   Secret: Felix
   Issuer: blog-server
   Expire: 7200
+
+Email:
+  Host: smtp.office365.com
+  Port: 587
+  UserName: email
+  Password: password
+  IsSSL: true
+  From: email
+  To:
+    - email

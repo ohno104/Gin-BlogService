@@ -154,3 +154,11 @@ func (l *Logger) Fatalf(format string, v ...interface{}) {
 func (l *Logger) Errorf(format string, v ...interface{}) {
 	l.Output(LevelError, fmt.Sprintf(format, v...))
 }
+
+func (l *Logger) Panic(ctx context.Context, v ...interface{}) {
+	l.Output(LevelFatal, fmt.Sprint(v...))
+}
+
+func (l *Logger) Panicf(ctx context.Context, format string, v ...interface{}) {
+	l.Output(LevelError, fmt.Sprintf(format, v...))
+}
