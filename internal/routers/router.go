@@ -18,6 +18,7 @@ func NewRouter() *gin.Engine {
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	r.POST("/auth", api.GetAuth)
 	r.Use(middleware.Translations())
 
 	article := v1.NewArticle()
@@ -27,6 +28,7 @@ func NewRouter() *gin.Engine {
 	r.Static("/static", "./"+global.AppSetting.UploadSavePath)
 
 	apiv1 := r.Group("/api/v1")
+	apiv1.Use(middleware.JWT())
 	{
 		apiv1.POST("/tags", tag.Create)
 		apiv1.DELETE("/tags/:id", tag.Delete)

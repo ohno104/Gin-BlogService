@@ -28,3 +28,8 @@ Database:
   ParseTime: True
   MaxIdleConns: 10
   MaxOpenConns: 30
+
+JWT:
+  Secret: Felix
+  Issuer: blog-server
+  Expire: 7200
