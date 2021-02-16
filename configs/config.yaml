@@ -16,6 +16,7 @@ App:
     - .jpg
     - .jpeg
     - .png
+  DefalutContextTimeout: 60
 
 Database:
   DBType: mysql

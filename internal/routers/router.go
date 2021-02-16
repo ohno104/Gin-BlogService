@@ -1,10 +1,13 @@
 package routers
 
 import (
+	"time"
+
 	"felix.bs.com/felix/BeStrongerInGO/Gin-BlogService/global"
 	"felix.bs.com/felix/BeStrongerInGO/Gin-BlogService/internal/middleware"
 	"felix.bs.com/felix/BeStrongerInGO/Gin-BlogService/internal/routers/api"
 	v1 "felix.bs.com/felix/BeStrongerInGO/Gin-BlogService/internal/routers/api/v1"
+	"felix.bs.com/felix/BeStrongerInGO/Gin-BlogService/pkg/limiter"
 
 	_ "felix.bs.com/felix/BeStrongerInGO/Gin-BlogService/docs"
 
@@ -13,13 +16,25 @@ import (
 	swaggerFiles "github.com/swaggo/gin-swagger/swaggerFiles"
 )
 
+var methodLimiters = limiter.NewMethodLimiter().AddBuckets(
+	limiter.LimiterBucketRule{
+		Key:          "/auth",
+		FillInterval: time.Second,
+		Capacity:     10,
+		Quantm:       10,
+	},
+)
+
 func NewRouter() *gin.Engine {
 	r := gin.New()
 	r.Use(gin.Logger())
 	//r.Use(gin.Recovery())
+	//r.Use(middleware.AccessLog())
 	r.Use(middleware.Recovery())
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	r.POST("/auth", api.GetAuth)
+	r.Use(middleware.RateLimiter(methodLimiters))
+	r.Use(middleware.ContextTimeout(time.Duration(global.AppSetting.DefaultContextTimeout) * time.Second))
 	r.Use(middleware.Translations())
 
 	article := v1.NewArticle()
