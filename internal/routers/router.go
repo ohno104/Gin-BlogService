@@ -27,10 +27,11 @@ var methodLimiters = limiter.NewMethodLimiter().AddBuckets(
 
 func NewRouter() *gin.Engine {
 	r := gin.New()
-	r.Use(gin.Logger())
+	//r.Use(gin.Logger())
 	//r.Use(gin.Recovery())
-	//r.Use(middleware.AccessLog())
+	r.Use(middleware.AccessLog())
 	r.Use(middleware.Recovery())
+	r.Use(middleware.Tracing())
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	r.POST("/auth", api.GetAuth)
 	r.Use(middleware.RateLimiter(methodLimiters))

@@ -10,6 +10,7 @@ import (
 	"felix.bs.com/felix/BeStrongerInGO/Gin-BlogService/internal/routers"
 	"felix.bs.com/felix/BeStrongerInGO/Gin-BlogService/pkg/logger"
 	"felix.bs.com/felix/BeStrongerInGO/Gin-BlogService/pkg/setting"
+	"felix.bs.com/felix/BeStrongerInGO/Gin-BlogService/pkg/tracer"
 	"github.com/gin-gonic/gin"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
@@ -28,6 +29,11 @@ func init() {
 	err = setupLogger()
 	if err != nil {
 		log.Fatalf("init.setupLogger err: %v", err)
+	}
+
+	err = setupTracer()
+	if err != nil {
+		log.Fatalf("init.setupTracer err: %v", err)
 	}
 
 }
@@ -112,5 +118,17 @@ func setupLogger() error {
 		LocalTime: true,
 	}, "", log.LstdFlags).WithCaller(2)
 
+	return nil
+}
+
+func setupTracer() error {
+	jaegerTracer, _, err := tracer.NewJaegerTracer(
+		"blog-service",
+		"127.0.0.1:6831",
+	)
+	if err != nil {
+		return nil
+	}
+	global.Tracer = jaegerTracer
 	return nil
 }

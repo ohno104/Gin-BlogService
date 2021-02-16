@@ -8,6 +8,8 @@ import (
 	"log"
 	"runtime"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 type Level int8
@@ -122,6 +124,17 @@ func (l *Logger) JSONFormat(level Level, message string) map[string]interface{} 
 	return data
 }
 
+func (l *Logger) WithTrace() *Logger {
+	ginCtx, ok := l.ctx.(*gin.Context)
+	if ok {
+		return l.WithFields(Fields{
+			"trace_id": ginCtx.MustGet("X-Trace-ID"),
+			"span_id":  ginCtx.MustGet("X-Span-ID"),
+		})
+	}
+	return l
+}
+
 func (l *Logger) Output(level Level, message string) {
 	body, _ := json.Marshal(l.JSONFormat(level, message))
 	context := string(body)
@@ -135,12 +148,22 @@ func (l *Logger) Output(level Level, message string) {
 	}
 }
 
+/*
 func (l *Logger) Info(v ...interface{}) {
 	l.Output(LevelInfo, fmt.Sprint(v...))
 }
 
 func (l *Logger) Infof(format string, v ...interface{}) {
 	l.Output(LevelInfo, fmt.Sprintf(format, v...))
+}
+*/
+
+func (l *Logger) Info(ctx context.Context, v ...interface{}) {
+	l.WithContext(ctx).WithTrace().Output(LevelInfo, fmt.Sprint(v...))
+}
+
+func (l *Logger) Infof(ctx context.Context, format string, v ...interface{}) {
+	l.WithContext(ctx).WithTrace().Output(LevelInfo, fmt.Sprintf(format, v...))
 }
 
 func (l *Logger) Fatal(v ...interface{}) {
