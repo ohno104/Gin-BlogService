@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -22,6 +23,10 @@ var (
 	runMode string
 	dbPwd   string
 	config  string
+
+	showInfo    bool
+	buildTime   string
+	gitCommitID string
 )
 
 func init() {
@@ -57,17 +62,11 @@ func init() {
 // @description GO語言程式設計之旅:一起用Go做專案
 // @termsOfService https://github.com/go-programming-tour-book
 func main() {
-	/*
-		router := routers.NewRouter()
-		s := &http.Server{
-			Addr:           ":8080",
-			Handler:        router,
-			ReadTimeout:    10 * time.Second,
-			WriteTimeout:   10 * time.Second,
-			MaxHeaderBytes: 1 << 20,
-		}
-		s.ListenAndServe()
-	*/
+	if showInfo {
+		fmt.Println("build_time:", buildTime)
+		fmt.Println("git_commit_id:", gitCommitID)
+		return
+	}
 
 	gin.SetMode(global.ServerSetting.RunMode)
 	router := routers.NewRouter()
@@ -78,6 +77,7 @@ func main() {
 		WriteTimeout:   global.ServerSetting.WriteTimeout,
 		MaxHeaderBytes: 1 << 20,
 	}
+
 	s.ListenAndServe()
 }
 
@@ -166,6 +166,8 @@ func setupFlag() error {
 	flag.StringVar(&runMode, "mode", "", "啟動模式")
 	flag.StringVar(&dbPwd, "dbpwd", "", "資料庫密碼")
 	flag.StringVar(&config, "config", "configs/", "指定要使用的設定檔路徑")
+
+	flag.BoolVar(&showInfo, "info", false, "顯示編譯資訊")
 	flag.Parse()
 
 	return nil

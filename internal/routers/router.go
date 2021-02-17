@@ -27,7 +27,7 @@ var methodLimiters = limiter.NewMethodLimiter().AddBuckets(
 
 func NewRouter() *gin.Engine {
 	r := gin.New()
-	//r.Use(gin.Logger())
+	r.Use(gin.Logger())
 	//r.Use(gin.Recovery())
 	r.Use(middleware.AccessLog())
 	r.Use(middleware.Recovery())
@@ -45,7 +45,8 @@ func NewRouter() *gin.Engine {
 	r.Static("/static", "./"+global.AppSetting.UploadSavePath)
 
 	apiv1 := r.Group("/api/v1")
-	apiv1.Use(middleware.JWT())
+	//apiv1.Use(middleware.JWT())
+	apiv1.Use()
 	{
 		apiv1.POST("/tags", tag.Create)
 		apiv1.DELETE("/tags/:id", tag.Delete)
