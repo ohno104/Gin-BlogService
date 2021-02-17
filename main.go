@@ -1,8 +1,10 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"felix.bs.com/felix/BeStrongerInGO/Gin-BlogService/global"
@@ -15,8 +17,20 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
+var (
+	port    string
+	runMode string
+	dbPwd   string
+	config  string
+)
+
 func init() {
-	err := setupSetting()
+	err := setupFlag()
+	if err != nil {
+		log.Fatalf("init.setupFlag err: %v", err)
+	}
+
+	err = setupSetting()
 	if err != nil {
 		log.Fatalf("init.setupSetting err: %v", err)
 	}
@@ -68,7 +82,8 @@ func main() {
 }
 
 func setupSetting() error {
-	setting, err := setting.NewSetting()
+	//setting, err := setting.NewSetting()
+	setting, err := setting.NewSetting(strings.Split(config, ",")...)
 	if err != nil {
 		return err
 	}
@@ -96,6 +111,19 @@ func setupSetting() error {
 	global.JWTSetting.Expire *= time.Second
 	global.ServerSetting.ReadTimeout *= time.Second
 	global.ServerSetting.WriteTimeout *= time.Second
+
+	if port != "" {
+		global.ServerSetting.HttpPort = port
+	}
+
+	if runMode != "" {
+		global.ServerSetting.RunMode = runMode
+	}
+
+	if dbPwd != "" {
+		global.DatabaseSetting.Password = dbPwd
+	}
+
 	return nil
 }
 
@@ -130,5 +158,15 @@ func setupTracer() error {
 		return nil
 	}
 	global.Tracer = jaegerTracer
+	return nil
+}
+
+func setupFlag() error {
+	flag.StringVar(&port, "port", "", "啟動通訊埠")
+	flag.StringVar(&runMode, "mode", "", "啟動模式")
+	flag.StringVar(&dbPwd, "dbpwd", "", "資料庫密碼")
+	flag.StringVar(&config, "config", "configs/", "指定要使用的設定檔路徑")
+	flag.Parse()
+
 	return nil
 }
