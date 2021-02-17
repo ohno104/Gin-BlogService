@@ -1,8 +1,15 @@
 package main
 
 import (
+	"context"
+	"flag"
+	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"strings"
+	"syscall"
 	"time"
 
 	"felix.bs.com/felix/BeStrongerInGO/Gin-BlogService/global"
@@ -15,8 +22,24 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
+var (
+	port    string
+	runMode string
+	dbPwd   string
+	config  string
+
+	showInfo    bool
+	buildTime   string
+	gitCommitID string
+)
+
 func init() {
-	err := setupSetting()
+	err := setupFlag()
+	if err != nil {
+		log.Fatalf("init.setupFlag err: %v", err)
+	}
+
+	err = setupSetting()
 	if err != nil {
 		log.Fatalf("init.setupSetting err: %v", err)
 	}
@@ -43,17 +66,11 @@ func init() {
 // @description GO語言程式設計之旅:一起用Go做專案
 // @termsOfService https://github.com/go-programming-tour-book
 func main() {
-	/*
-		router := routers.NewRouter()
-		s := &http.Server{
-			Addr:           ":8080",
-			Handler:        router,
-			ReadTimeout:    10 * time.Second,
-			WriteTimeout:   10 * time.Second,
-			MaxHeaderBytes: 1 << 20,
-		}
-		s.ListenAndServe()
-	*/
+	if showInfo {
+		fmt.Println("build_time:", buildTime)
+		fmt.Println("git_commit_id:", gitCommitID)
+		return
+	}
 
 	gin.SetMode(global.ServerSetting.RunMode)
 	router := routers.NewRouter()
@@ -64,11 +81,31 @@ func main() {
 		WriteTimeout:   global.ServerSetting.WriteTimeout,
 		MaxHeaderBytes: 1 << 20,
 	}
-	s.ListenAndServe()
+
+	//s.ListenAndServe()
+	go func() {
+		err := s.ListenAndServe()
+		if err != nil && err != http.ErrServerClosed {
+			log.Fatalf("s.ListenAndServe err: %v", err)
+		}
+	}()
+
+	quit := make(chan os.Signal)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+	log.Println("Shuting down server...")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	if err := s.Shutdown(ctx); err != nil {
+		log.Fatal("Server forced to shutdown: ", err)
+	}
+	log.Println("Server exiting")
 }
 
 func setupSetting() error {
-	setting, err := setting.NewSetting()
+	//setting, err := setting.NewSetting()
+	setting, err := setting.NewSetting(strings.Split(config, ",")...)
 	if err != nil {
 		return err
 	}
@@ -96,6 +133,19 @@ func setupSetting() error {
 	global.JWTSetting.Expire *= time.Second
 	global.ServerSetting.ReadTimeout *= time.Second
 	global.ServerSetting.WriteTimeout *= time.Second
+
+	if port != "" {
+		global.ServerSetting.HttpPort = port
+	}
+
+	if runMode != "" {
+		global.ServerSetting.RunMode = runMode
+	}
+
+	if dbPwd != "" {
+		global.DatabaseSetting.Password = dbPwd
+	}
+
 	return nil
 }
 
@@ -130,5 +180,17 @@ func setupTracer() error {
 		return nil
 	}
 	global.Tracer = jaegerTracer
+	return nil
+}
+
+func setupFlag() error {
+	flag.StringVar(&port, "port", "", "啟動通訊埠")
+	flag.StringVar(&runMode, "mode", "", "啟動模式")
+	flag.StringVar(&dbPwd, "dbpwd", "", "資料庫密碼")
+	flag.StringVar(&config, "config", "configs/", "指定要使用的設定檔路徑")
+
+	flag.BoolVar(&showInfo, "info", false, "顯示編譯資訊")
+	flag.Parse()
+
 	return nil
 }
