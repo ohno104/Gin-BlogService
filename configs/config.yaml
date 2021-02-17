@@ -1,0 +1,46 @@
+Server:
+  RunMode: debug
+  HttpPort: 8000
+  ReadTimeout: 60
+  WriteTimeout: 60
+App:
+  DefaultPageSize: 10
+  MaxPageSize: 100
+  LogSavePath: storage/logs
+  LogFileName: app
+  LogFileExt: .log
+  UploadSavePath: storage/uploads
+  UploadServerUrl: http://127.0.0.1:8000/static
+  UploadImageMaxSize: 5  # MB
+  UploadImageAllowExts:
+    - .jpg
+    - .jpeg
+    - .png
+  DefalutContextTimeout: 60
+
+Database:
+  DBType: mysql
+  UserName: root
+  Password: password
+  Host: 127.0.0.1:3306
+  DBName: blog_service
+  TablePrefix: blog_
+  Charset: utf8
+  ParseTime: True
+  MaxIdleConns: 10
+  MaxOpenConns: 30
+
+JWT:
+  Secret: Felix
+  Issuer: blog-server
+  Expire: 7200
+
+Email:
+  Host: smtp.office365.com
+  Port: 587
+  UserName: email
+  Password: password
+  IsSSL: true
+  From: email
+  To:
+    - email
